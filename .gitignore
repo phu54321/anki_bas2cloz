@@ -57,3 +57,5 @@ target/
 
 # Mac
 .DS_Store
+/cloze_hide_all/__init__.py.bak
+*~

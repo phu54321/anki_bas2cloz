@@ -1,10 +1,11 @@
 # -*- mode: Python ; coding: utf-8 -*-
 #
-# Cloze (Hide All) - v5.1
+# Cloze (Hide All) - v6
 #   Adds a new card type "Cloze (Hide All)", which hides all clozes on its
 #   front and optionally on the back.
 #
 # Changelog
+#  v6 : compatible with 2.1
 #  v5 : DOM-boundary crossing clozes will be handled properly
 #  .1 : More rubust DOM boundary handling
 #        Compatiable with addon 719871418
@@ -18,12 +19,13 @@
 #  v1 : Initial release
 #
 # Copyright © 2017 Hyun Woo Park (phu54321@naver.com)
+# Copyright © 2018 Arthur Milchior (arthur@milchior.fr)
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 #
 # Lots of code from
 #   - Cloze overlapper (by Glutaminate)
 #   - Batch Note Editing (by Glutaminate)
-#
+# Original add-on number 1709973686
 
 import re
 
@@ -39,7 +41,7 @@ from aqt import mw
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TEMPALTES
 
-model_name = u'Cloze (Hide all)'
+model_name = 'Cloze (Hide all)'
 
 czhd_def = '''\
 <script>
@@ -53,6 +55,7 @@ setTimeout(function() {
 }, 0);
 /* --- DO NOT DELETE OR EDIT THIS SCRIPT --- */
 </script>
+
 '''
 
 card_front = '''
@@ -60,6 +63,7 @@ card_front = '''
 cloze2 {
     display: none;
 }
+
 cloze2_w {
     display: inline-block;
     width: 5em;
@@ -85,39 +89,47 @@ card_css = '''
     color: black;
     background-color: white;
 }
+
 .cloze {
     font-weight: bold;
     color: blue;
 }
+
 cz_hide {
     display: none;
 }
 '''
 
-hideback_caption = u'Hide others on the back side'
+hideback_caption = 'Hide others on the back side'
 
 hideback_html = '''<style>
 cloze2 {
     display: none;
 }
+
 cloze2_w {
     display: inline-block;
     width: 5em;
     height: 1em;
     background-color: #ffeba2;
 }
+
 .cloze cloze2 {
     display: inline;
 }
+
 .cloze cloze2_w {
     display: none;
 }
+
 cloze2.reveal-cloze2 {
     display: inline;
 }
+
 cloze2_w.reveal-cloze2 {
     display: none;
 }
+
 .cloze2-toggle {
     -webkit-appearance: none;
     display: block;
@@ -127,10 +139,12 @@ cloze2_w.reveal-cloze2 {
     width: 100%;
     margin-top: 20px;
 }
+
 .cloze2-toggle:active {
     background-color: #ffffaa;
 }
 </style>
+
 <script>
 function toggle() {
 var elements = document.querySelectorAll('cloze2, cloze2_w');
@@ -139,6 +153,7 @@ var elements = document.querySelectorAll('cloze2, cloze2_w');
     }
 }
 </script>
+
 <button class='cloze2-toggle' onclick='toggle()'>Toogle mask</button>'''
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TEMPALTES
@@ -384,7 +399,7 @@ def makeClozeCompatiable(html):
 
 
 def updateNote(note):
-    for key in note.keys():
+    for key in list(note.keys()):
         html = note[key]
         html = stripClozeHelper(html)
         html = makeClozeCompatiable(html)
@@ -420,7 +435,7 @@ def onEditCurrent(self, *args):
         ed.loadNote()
 
 
-EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "before")
+EditCurrent.saveAndClose = wrap(EditCurrent.saveAndClose, onEditCurrent, "before")
 
 
 # Batch change node types on card type change
