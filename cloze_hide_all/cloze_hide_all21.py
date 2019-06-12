@@ -39,7 +39,7 @@ from anki.consts import MODEL_CLOZE
 from aqt import mw
 
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TEMPALTES
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TEMPLATES
 
 model_name = 'Cloze (Hide all)'
 
@@ -408,7 +408,7 @@ def updateNote(note):
 
 # AddCards and EditCurrent windows
 
-def onEditorSave(self, *args):
+def onEditorSave(self, *args, **kwargs):
     """Automatically generate overlapping clozes before adding cards"""
     note = self.note
     if note is None:
