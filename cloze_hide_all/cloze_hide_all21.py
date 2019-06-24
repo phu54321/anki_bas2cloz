@@ -408,20 +408,25 @@ def updateNote(note):
 
 # AddCards and EditCurrent windows
 
+_oldSaveNow = Editor.saveNow
 def onEditorSave(self, *args, **kwargs):
     """Automatically generate overlapping clozes before adding cards"""
-    note = self.note
-    if note is None:
+    if self.note is None:
         return
 
-    if note.model()["name"] == model_name:
-        self.web.eval("saveField('blur');")
-        updateNote(note)
-        self.setNote(note)
+    if self.note.model()["name"] == model_name:
+        self.web.eval("saveField('key');")
+        updateNote(self.note)
+        self.setNote(self.note)
+    return _oldSaveNow(self, *args, **kwargs)
 
 
-Editor.saveNow = wrap(Editor.saveNow, onEditorSave, "before")
+Editor.saveNow = onEditorSave
 
+def onCloze(self):
+    _oldSaveNow(self, self._onCloze, keepFocus = True)
+Editor.onCloze = onCloze
+Editor._links["cloze"] = onCloze
 
 def onEditCurrent(self, *args):
     ed = self.editor
