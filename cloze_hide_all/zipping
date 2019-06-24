@@ -1,0 +1,2 @@
+rm clozeHideAll.zip
+zip clozeHideAll.zip config.* *py  LICENSE *.md zipping --exclude \*~ \*zip
